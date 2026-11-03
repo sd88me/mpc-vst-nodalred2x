@@ -47,7 +47,9 @@ The firmware boots in about 2 seconds.
 - **RELOAD** reverts the edits to the stored sound. **PANIC** stops stuck notes.
 - **MOD > LFO 2 / ARPEGGIATOR:** set the destination to an arp mode (Up, Down, Up/Down, Random, Echo) to run the arpeggiator; its rate is LFO 2's Rate,
   or a note value with Sync set.
-- Sounds from files have no names (the Nord Lead's dumps carry none): they show as their number.
+- The Nord Lead's dumps carry no names. A text file next to a bank, with the same name and `.txt` (one sound name per line), names its sounds.
+  For Clavia's factory banks, `tools/names_from_pdf.py <Factory Program Library List.pdf> <banks folder>` writes them from your copy of
+  Clavia's list (bank files ending in their bank number: `bank0.syx` ... `bank3.syx`).
 
 ![FILTER page](docs/screenshots/filter.png)
 

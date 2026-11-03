@@ -3,3 +3,4 @@ dist/
 vst/build/
 *.bin
 *.wav
+pgo/

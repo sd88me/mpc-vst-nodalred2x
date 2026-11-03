@@ -290,6 +290,16 @@ void scan_banks(Inst *in) {
         xlog("[banks] %s: %zu messages, %zu singles", n.c_str(), msgs.size(), singles.size());
         if (singles.empty()) continue;
         std::string stem = n.substr(0, n.size() - 4);
+        /* names: the dumps carry none, so an optional "<file>.txt" beside the bank gives one per line, sound 1 first
+         * (tools/names_from_pdf.py writes them from Clavia's factory program list) */
+        if (FILE *nf = fopen((dir + "/" + stem + ".txt").c_str(), "r")) {
+            char line[64];
+            for (size_t k = 0; k < singles.size() && fgets(line, sizeof line, nf); k++) {
+                line[strcspn(line, "\r\n")] = 0;
+                if (line[0] && singles[k].name.empty()) singles[k].name.assign(line, strnlen(line, 22));
+            }
+            fclose(nf);
+        }
         for (auto &c : stem) c = (char)toupper((unsigned char)(c == '_' ? ' ' : c));
         if (stem.size() > 15) stem.resize(15);
         const int nb = (int)(singles.size() + NR_PER_BANK - 1) / NR_PER_BANK;
