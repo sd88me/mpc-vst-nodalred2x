@@ -134,24 +134,67 @@ def header(p):
     p.widgets.append('stepper w=640 h=44 cx=944 cy=%d label="" key=preset get=preset_name prev=preset_prev next=preset_next style=dotmatrix persistent=1' % (72 + Y86))
 
 
-# ---------------------------------------------------------------- MAIN
-QUICK = ["Cutoff", "Resonance", "FilterEnvAmount", "FilterEnvD", "AmpEnvA", "AmpEnvR", "Lfo1Rate", "Portamento"]
-p = Page("MAIN", QUICK + ["gain"])
+# ---------------------------------------------------------------- MAIN: the upstream's dark performance section (left), quick edit 4 x 2 (right)
+import math
+DARK = (59, 55, 65)
+QUICK = ["Cutoff", "Resonance", "FilterEnvAmount", "FilterEnvD", "AmpEnvA", "AmpEnvD", "AmpEnvS", "AmpEnvR"]
+p = Page("MAIN", QUICK + ["gain", "Portamento", "unison_detune", "-"])
 header(p)
-p.panel(8, 120, 1264, 138, "DISPLAY")
-p.d.rounded_rectangle((180, 160, 900, 246), 10, fill=(26, 26, 34))
-p.d.rectangle((188, 168, 892, 238), fill=(42, 6, 6))
-for yy in range(170, 238, 3):
-    p.d.line((188, yy, 892, yy), fill=(50, 8, 8))
-p.widgets.append('readout cx=540 cy=%d w=690 h=36 label="" key=loading_status box=0 tsize=24 tcolor=ff3030 tweight=700' % (188 + Y86))
-p.widgets.append('readout cx=540 cy=%d w=690 h=36 label="" key=engine_stats box=0 tsize=24 tcolor=ff3030 tweight=700' % (222 + Y86))
-p.button(1000, 202, "all_notes_off", "PANIC")
-p.button(1140, 202, "init_patch", "RELOAD")
-p.panel(8, 270, 1264, 350, "QUICK EDIT")
-p.row(8, 1272, 382, [("Cutoff", "Cutoff"), ("Resonance", "Resonance"), ("FilterEnvAmount", "Env Amount"), ("Mix", "Osc Mix"), ("FmDepth", "FM Amount"),
-                     ("PW", "Pulse Width"), ("O2Pitch", "Osc 2 Pitch"), ("O2PitchFine", "Osc 2 Fine"), ("gain", "Gain %")])
-p.row(8, 1272, 538, [("FilterEnvD", "F.Env Decay"), ("AmpEnvA", "Attack"), ("AmpEnvD", "Decay"), ("AmpEnvS", "Sustain"), ("AmpEnvR", "Release"),
-                     ("Lfo1Rate", "LFO 1 Rate"), ("Lfo1Level", "LFO 1 Amount"), ("Portamento", "Portamento"), ("ModEnvLevel", "Mod Env Amt")])
+DX0, DX1 = 8, 776
+p.d.rounded_rectangle((DX0, 118, DX1, 620), 14, fill=DARK)
+
+
+def ticks(cx, cy, r):
+    """the white scale printed around the original's panel knobs (11 ticks over 270 degrees)"""
+    for i in range(11):
+        a = math.radians(135 + i * 27)
+        p.d.line((cx + math.cos(a) * r, cy + math.sin(a) * r, cx + math.cos(a) * (r + 9), cy + math.sin(a) * (r + 9)), fill=WHITE, width=3)
+
+
+def value_window(cx, y):      # MPC writes knob values in the theme ink (dark): a light window on the dark section
+    p.d.rounded_rectangle((cx - 34, y, cx + 34, y + 28), 7, fill=BODY)
+
+
+def dark_knob(cx, cy, key, r=34):
+    ticks(cx, cy, r + 12)
+    value_window(cx, cy + r + 18)
+    p.widgets.append('knob cx=%d cy=%d r=%d label="" key=%s ns=0 vs=20 vy=12 bw=%d' % (cx, cy + Y86, r, key, 2 * r + 40))
+
+
+# top row: master level, the red display, PANIC / RELOAD
+p.d.text((80, 132), "master", font=F(22), fill=WHITE, anchor="ma")
+p.d.text((80, 154), "level", font=F(22), fill=WHITE, anchor="ma")
+dark_knob(80, 236, "gain", 30)
+p.d.rounded_rectangle((160, 132, 600, 300), 10, fill=RED)
+p.d.rectangle((176, 148, 584, 284), fill=(26, 26, 34))
+p.d.rectangle((182, 154, 578, 278), fill=(42, 6, 6))
+for yy in range(156, 278, 3):
+    p.d.line((182, yy, 578, yy), fill=(50, 8, 8))
+p.widgets.append('readout cx=380 cy=%d w=380 h=40 label="" key=loading_status box=0 tsize=28 tcolor=ff3030 tweight=700' % (194 + Y86))
+p.widgets.append('readout cx=380 cy=%d w=380 h=40 label="" key=engine_stats box=0 tsize=28 tcolor=ff3030 tweight=700' % (240 + Y86))
+p.button(690, 172, "all_notes_off", "PANIC")
+p.button(690, 258, "init_patch", "RELOAD")
+p.d.line((24, 318, DX1 - 16, 318), fill=(80, 76, 88), width=2)
+# bottom row: the switch columns under slate headings, as on the original
+COLS = [94, 248, 400, 552, 690]
+p.chip(COLS[0], 334, "PLAY MODE", 16)
+p.widgets.append('enum_v cx=%d cy=%d label="" key=VoiceMode sw=132 sh=40' % (COLS[0], 430 + Y86))
+p.chip(COLS[1], 334, "PORTAMENTO", 16)
+dark_knob(COLS[1], 414, "Portamento")
+p.chip(COLS[1], 506, "AUTO", 15)
+p.widgets.append('toggle cx=%d cy=%d label="" key=Auto ns=0' % (COLS[1], 552 + Y86))
+p.chip(COLS[2], 334, "UNISON", 16)
+p.widgets.append('toggle cx=%d cy=%d label="" key=Unison ns=0' % (COLS[2], 384 + Y86))
+p.chip(COLS[2], 422, "Detune", 15)
+dark_knob(COLS[2], 492, "unison_detune", 30)
+p.chip(COLS[3], 334, "OCT SHIFT", 16)
+p.widgets.append('enum_v cx=%d cy=%d label="" key=OctaveShift sw=120 sh=40' % (COLS[3], 468 + Y86))
+p.chip(COLS[4], 334, "MOD W DEST", 16)
+p.widgets.append('enum_v cx=%d cy=%d label="" key=ModWheelDest sw=136 sh=40' % (COLS[4], 468 + Y86))
+# quick edit, 4 x 2
+p.panel(788, 118, 484, 502, "QUICK EDIT")
+p.row(788, 1272, 260, [("Cutoff", "Cutoff"), ("Resonance", "Resonance"), ("FilterEnvAmount", "Env Amt"), ("FilterEnvD", "F.Decay")])
+p.row(788, 1272, 500, [("AmpEnvA", "Attack"), ("AmpEnvD", "Decay"), ("AmpEnvS", "Sustain"), ("AmpEnvR", "Release")])
 p.done()
 
 # ---------------------------------------------------------------- BANKS (STARTERS, then the sound-set files in banks/)

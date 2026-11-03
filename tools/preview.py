@@ -93,6 +93,13 @@ def render(name, ws, art):
                 for yy in range(cy - h // 2 + 2, cy + h // 2, 3):
                     d.line((x0, yy, x0 + w, yy), fill=T("theme_display_cell"))
             d.text((x0 + 12 if op == "stepper" else cx, cy), txt, font=F(17), fill=ink, anchor="lm" if op == "stepper" else "mm")
+        elif op == "enum_v":
+            opts = P[key]["options"]; sw, sh = int(a.get("sw", 135)), int(a.get("sh", 30))
+            y0 = cy - (len(opts) * (sh + 2)) // 2
+            for j, o in enumerate(opts):
+                on = j == (i % len(opts))
+                d.rounded_rectangle((cx - sw // 2, y0 + j * (sh + 2), cx + sw // 2, y0 + j * (sh + 2) + sh), 8, fill=T("theme_seg_active") if on else T("theme_seg_inactive"))
+                d.text((cx, y0 + j * (sh + 2) + sh // 2), o, font=F(16), fill=(255, 255, 255), anchor="mm")
         elif op == "button":
             w, h = int(a.get("w", 120)), int(a.get("h", 50))
             d.rounded_rectangle((cx - w // 2, cy - h // 2, cx + w // 2, cy + h // 2), 4, fill=T("theme_btn_bg"))
@@ -123,6 +130,6 @@ for l in lines + ["[tab END]"]:
     op = l.split(" ", 1)[0]
     if op == "art":
         art = attrs(l)["file"]
-    elif op in ("knob", "toggle", "popup", "readout", "stepper", "button", "list"):
+    elif op in ("knob", "toggle", "popup", "readout", "stepper", "button", "list", "enum_v"):
         ws.append((op, attrs(l)))
 print("preview:", OUT)
