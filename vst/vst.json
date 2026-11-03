@@ -1,0 +1,39 @@
+{
+  "name": "NodalRed2x",
+  "vendor": "sd88me",
+  "uid": "NodR",
+  "version": 1000,
+  "targets": [
+    "aarch64"
+  ],
+  "so": "nodalred2x.so",
+  "programs": {
+    "param": "favourite"
+  },
+  "params": "params.json",
+  "art": "html",
+  "defines": {
+    "HAS_DISPLAY_REV": 1,
+    "DISPLAY_REV_NO_UPDATE": 1,
+    "MODULE_SUBDIR": "\"nodalred2x\"",
+    "MODULE_DIR": "\"/sdcard/vst/nodalred2x\"",
+    "PARAM_TEXT_MAX": 64,
+    "HAS_SONG_POS": 1
+  },
+  "build": {
+    "root": "..",
+    "sources": [],
+    "cflags": [],
+    "libs": [
+      "vst/build/engine/libnodalred2x_all.a",
+      "-Wl,--exclude-libs,ALL",
+      "-static-libstdc++",
+      "-static-libgcc",
+      "-lstdc++",
+      "-lm",
+      "-ldl"
+    ]
+  },
+  "layout": "layout.conf",
+  "tile": "images/tile.png"
+}

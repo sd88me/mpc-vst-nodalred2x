@@ -1,0 +1,1 @@
+Put your Nord Lead 2x ROM here: a 512 kB flash dump (.bin). No ROM is included, and none may be shared.

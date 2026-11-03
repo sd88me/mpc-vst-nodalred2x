@@ -279,16 +279,15 @@ void scan_banks(Inst *in) {
     closedir(d);
     std::sort(files.begin(), files.end());
     for (const auto &n : files) {
-        synthLib::SysexBuffer buf;
-        if (!synthLib::MidiToSysex::readFile(buf, (dir + "/" + n).c_str())) continue;
         synthLib::SysexBufferList msgs;
-        synthLib::MidiToSysex::splitMultipleSysex(msgs, buf, false);
+        if (!synthLib::MidiToSysex::extractSysexFromFile(msgs, dir + "/" + n)) { xlog("[banks] %s: no sysex", n.c_str()); continue; }
         std::vector<Sound> singles;
         for (auto &m : msgs) {
             Sound s;
             std::string nm;
             if (parse_single(std::vector<uint8_t>(m.begin(), m.end()), s.p, nm)) { s.name = nm; singles.push_back(s); }
         }
+        xlog("[banks] %s: %zu messages, %zu singles", n.c_str(), msgs.size(), singles.size());
         if (singles.empty()) continue;
         std::string stem = n.substr(0, n.size() - 4);
         for (auto &c : stem) c = (char)toupper((unsigned char)(c == '_' ? ' ' : c));
@@ -661,8 +660,11 @@ void eng_destroy(void *p) {
 }
 
 void select_sound(Inst *in, int bank, int prog) {
-    bank = clampi(bank, 0, bank_count(in) - 1);
-    prog = clampi(prog, 0, std::max(0, bank_size(in, bank) - 1));
+    if (in->failed) { bank = clampi(bank, 0, kMaxBanks - 1); prog = clampi(prog, 0, 127); }       // no ROM: keep what was asked
+    else {
+        bank = clampi(bank, 0, bank_count(in) - 1);
+        prog = clampi(prog, 0, std::max(0, bank_size(in, bank) - 1));
+    }
     in->bank_page = bank / NR_BANK_TILES;
     in->bank = bank;
     in->preset = prog;

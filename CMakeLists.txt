@@ -14,6 +14,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 
 # gearmulator pieces the Nord Lead 2x emulation needs (vendored in src/gearmulator, see src/VENDORED.md)
 set(GM ${CMAKE_CURRENT_SOURCE_DIR}/src/gearmulator)
+# MmuArray's remap-on-demand (munmap + mmap per block) corrupted the second Device torn down in a process on aarch64: use its vector fallback
+add_compile_definitions(DSP56K_NO_MMU_ARRAY)
 set(ASMJIT_STATIC TRUE)
 set(ASMJIT_NO_INSTALL TRUE)
 set(BUILD_SHARED_LIBS OFF)
@@ -50,3 +52,7 @@ target_link_libraries(nodalred2x_engine_test PRIVATE nodalred2x_dsp)
 add_executable(nodalred2x_bench test/bench.cpp)
 target_include_directories(nodalred2x_bench PRIVATE ${GM}/claudia/n2x)
 target_link_libraries(nodalred2x_bench PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)
+
+add_executable(nodalred2x_lifecycle test/lifecycle.cpp)
+target_include_directories(nodalred2x_lifecycle PRIVATE ${GM}/claudia/n2x)
+target_link_libraries(nodalred2x_lifecycle PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)

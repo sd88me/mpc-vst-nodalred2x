@@ -61,6 +61,7 @@ static void write_wav(const char *path) {
 }
 
 int main(int argc, char **argv) {
+    setvbuf(stdout, nullptr, _IONBF, 0);
     if (argc < 2) { fprintf(stderr, "usage: %s <data dir> [seconds] [out.wav]\n", argv[0]); return 2; }
     const double secs = argc > 2 ? atof(argv[2]) : 1.5;
     const mpc_engine_t *e = mpc_engine();

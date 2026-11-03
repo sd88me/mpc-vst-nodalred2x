@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build NodalRed2x. The engine (gearmulator's microQ emulation + src/dsp glue) is built with CMake into one static archive,
+# Build NodalRed2x. The engine (gearmulator's Nord Lead 2x emulation + src/dsp glue) is built with CMake into one static archive,
 # vst/build/engine/libnodalred2x_all.a, which vst/vst.json links into the plugin through tools/build_port.sh.
 #   ./build.sh engine [x86|aarch64]   just the archive for that architecture (default aarch64, cross-compiled in Docker)
 #   ./build.sh test                   x86 engine + the offline host test (tools/test_port.sh, ASan/UBSan)
@@ -14,7 +14,7 @@ merge() {   # merge <ar> <build dir>
   local AR="$1" B="$2" out="vst/build/engine/libnodalred2x_all.a"
   mkdir -p vst/build/engine
   { echo "CREATE $out"
-    for l in libnodalred2x_dsp.a mqLib/libmqLib.a wLib/libwLib.a hardwareLib/libhardwareLib.a mc68k/lib68kEmu.a synthLib/libsynthLib.a baseLib/libbaseLib.a \
+    for l in libnodalred2x_dsp.a n2xLib/libn2xLib.a hardwareLib/libhardwareLib.a mc68k/lib68kEmu.a synthLib/libsynthLib.a baseLib/libbaseLib.a \
              libresample/libresample.a dsp56kEmu/libdsp56kEmu.a dsp56kBase/libdsp56kBase.a asmjit/libasmjit.a vtuneSdk/libvtuneSdk.a; do
       [ -f "$B/$l" ] || { echo "missing $B/$l" >&2; exit 1; }
       echo "ADDLIB $B/$l"

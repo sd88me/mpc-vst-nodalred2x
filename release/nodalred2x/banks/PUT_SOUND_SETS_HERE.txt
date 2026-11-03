@@ -1,0 +1,1 @@
+Put sound-set files here: .syx or .mid files holding Nord Lead 2 / 2x single dumps (99 sounds make a bank).

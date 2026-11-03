@@ -64,7 +64,7 @@ namespace dsp56k
 			// On macOS, remapping sub-regions of an existing allocation triggers
 			// DEALLOC_GAP (EXC_GUARD SIGKILL) regardless of API used (mmap or
 			// mach_vm_map). Use fallback path until a working approach is found.
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(DSP56K_NO_MMU_ARRAY)
 			return initFallback();
 #endif
 
