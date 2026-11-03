@@ -1,0 +1,5 @@
+build/
+dist/
+vst/build/
+*.bin
+*.wav

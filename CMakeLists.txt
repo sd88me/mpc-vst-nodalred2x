@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.15)
+project(nordlead_mpc VERSION 0.1.0 LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Everything hidden, no STB_GNU_UNIQUE symbols: nordlead.so must be unloadable (glibc pins a DSO exporting a UNIQUE symbol
+# NODELETE) and export nothing but VSTPluginMain. build.sh merges the libraries below into one archive.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden -fno-gnu-unique")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+
+# gearmulator pieces the Nord Lead 2x emulation needs (vendored in src/gearmulator, see src/VENDORED.md)
+set(GM ${CMAKE_CURRENT_SOURCE_DIR}/src/gearmulator)
+set(ASMJIT_STATIC TRUE)
+set(ASMJIT_NO_INSTALL TRUE)
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory(${GM}/cpu/dsp56300/asmjit ${CMAKE_BINARY_DIR}/asmjit)
+add_subdirectory(${GM}/cpu/dsp56300/vtuneSdk ${CMAKE_BINARY_DIR}/vtuneSdk)
+add_subdirectory(${GM}/cpu/dsp56300/dsp56kBase ${CMAKE_BINARY_DIR}/dsp56kBase)
+add_subdirectory(${GM}/cpu/dsp56300/dsp56kEmu ${CMAKE_BINARY_DIR}/dsp56kEmu)
+add_subdirectory(${GM}/framework/baseLib ${CMAKE_BINARY_DIR}/baseLib)
+add_subdirectory(${GM}/3rdparty/libresample ${CMAKE_BINARY_DIR}/libresample)
+add_subdirectory(${GM}/framework/synthLib ${CMAKE_BINARY_DIR}/synthLib)
+add_subdirectory(${GM}/cpu/mc68k ${CMAKE_BINARY_DIR}/mc68k)
+# mc68k declares no include root of its own: hand it the cpu/ root (as gearmulator's top CMakeLists does)
+target_include_directories(68kEmu PUBLIC ${GM}/cpu)
+add_subdirectory(${GM}/framework/hardwareLib ${CMAKE_BINARY_DIR}/hardwareLib)
+add_subdirectory(${GM}/claudia/n2x/n2xLib ${CMAKE_BINARY_DIR}/n2xLib)
+
+# The engine: src/dsp's glue, in-process. build.sh links it with wrapper/vst2_wrap.c into nordlead.so.
+# MPC_VST: checkout of mpc-vst-plugins (wrapper/engine.h)
+if(NOT MPC_VST)
+  set(MPC_VST $ENV{HOME}/mpc-vst-plugins)
+endif()
+
+add_executable(nordlead_bench test/bench.cpp)
+target_include_directories(nordlead_bench PRIVATE ${GM}/claudia/n2x)
+target_link_libraries(nordlead_bench PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)
