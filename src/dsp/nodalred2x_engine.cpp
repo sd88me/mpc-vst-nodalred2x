@@ -373,6 +373,35 @@ std::vector<uint8_t> find_rom(const std::string &dir, std::string &name) {
     return out;
 }
 
+/* the device's threads, each on a core of its own (threads that hand work to each other must not queue behind one another):
+ * DSP A, DSP B and the 68331 on the first three fast cores, our own emulator thread beside the lightest of them. NR_NOSPREAD=1 skips it. */
+void spread_threads() {
+    const auto fast = fastcores::usable();
+    if (fast.size() < 3 || getenv("NR_NOSPREAD")) return;
+    DIR *d = opendir("/proc/self/task");
+    if (!d) return;
+    while (struct dirent *e = readdir(d)) {
+        if (e->d_name[0] < '0' || e->d_name[0] > '9') continue;
+        char path[64], comm[32] = "";
+        snprintf(path, sizeof path, "/proc/self/task/%s/comm", e->d_name);
+        FILE *f = fopen(path, "r");
+        if (!f) continue;
+        if (!fgets(comm, sizeof comm, f)) comm[0] = 0;
+        fclose(f);
+        int core = -1;
+        comm[strcspn(comm, "\n")] = 0;
+        if (strstr(comm, "DSP A")) core = fast[0];
+        else if (strstr(comm, "DSP B")) core = fast[1];
+        else if (!strncmp(comm, "MC68", 4)) core = fast[2];
+        if (core < 0) continue;
+        cpu_set_t set;
+        CPU_ZERO(&set);
+        CPU_SET(core, &set);
+        if (sched_setaffinity((pid_t)atoi(e->d_name), sizeof set, &set) == 0) xlog("[emu] %s -> core %d", comm, core);
+    }
+    closedir(d);
+}
+
 void emu_main(Inst *in) {
     tune_thread();
     std::string rom_name;
@@ -506,6 +535,7 @@ void emu_main(Inst *in) {
 
     in->set_status("Warming up...");
     send_all();
+    spread_threads();
     multi_dirty = false;
     for (int i = 0; i < kTargetFill / kBlock + 2 && !in->stop; i++) produce();
     in->ready = true;
@@ -697,6 +727,7 @@ int slot_key(const char *key, const char *prefix, int max, bool *on) {
     const long v = strtol(key + n, &end, 10);
     if (end == key + n || v < 1 || v > max) return 0;
     if (*end == 0) { *on = false; return (int)v; }
+    if (strcmp(end, "_on") == 0) { *on = true; return (int)v; }
     return 0;
 }
 
@@ -813,11 +844,13 @@ int eng_get(void *p, const char *key, char *buf, int n) {
     int k;
     if ((k = slot_key(key, "bank_slot_", NR_BANK_TILES, &on))) {
         const int b = in->bank_page * NR_BANK_TILES + k - 1;
+        if (on) return put(buf, n, "%d", b == in->bank ? 1 : 0);
         return put(buf, n, "%s", b < bank_count(in) ? in->banks[b].name.c_str() : "");
     }
     if (!strcmp(key, "bank_page_text")) return put(buf, n, "%d / %d", in->bank_page + 1, (bank_count(in) + NR_BANK_TILES - 1) / NR_BANK_TILES);
     if ((k = slot_key(key, "patch_slot_", NR_PATCH_TILES, &on))) {
         const int idx = in->page * NR_PATCH_TILES + k - 1;
+        if (on) return put(buf, n, "%d", idx == in->preset ? 1 : 0);
         if (idx >= bank_size(in, in->bank)) return put(buf, n, "%s", "");
         std::lock_guard<std::mutex> l(in->sm);
         const std::string nm = sound_name(in, in->bank, idx);
