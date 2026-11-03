@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Build NordLead. The engine (gearmulator's microQ emulation + src/dsp glue) is built with CMake into one static archive,
-# vst/build/engine/libnordlead_all.a, which vst/vst.json links into the plugin through tools/build_port.sh.
+# Build NodalRed2x. The engine (gearmulator's microQ emulation + src/dsp glue) is built with CMake into one static archive,
+# vst/build/engine/libnodalred2x_all.a, which vst/vst.json links into the plugin through tools/build_port.sh.
 #   ./build.sh engine [x86|aarch64]   just the archive for that architecture (default aarch64, cross-compiled in Docker)
 #   ./build.sh test                   x86 engine + the offline host test (tools/test_port.sh, ASan/UBSan)
-#   ./build.sh [all]                  aarch64 engine + skin + nordlead.so in vst/build/aarch64/ (Gen2)
+#   ./build.sh [all]                  aarch64 engine + skin + nodalred2x.so in vst/build/aarch64/ (Gen2)
 # MPC_VST: checkout of mpc-vst-plugins (default ~/mpc-vst-plugins).
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -11,10 +11,10 @@ MPC_VST="${MPC_VST:-$HOME/mpc-vst-plugins}"
 IMAGE=xenia-a64-builder
 
 merge() {   # merge <ar> <build dir>
-  local AR="$1" B="$2" out="vst/build/engine/libnordlead_all.a"
+  local AR="$1" B="$2" out="vst/build/engine/libnodalred2x_all.a"
   mkdir -p vst/build/engine
   { echo "CREATE $out"
-    for l in libnordlead_dsp.a mqLib/libmqLib.a wLib/libwLib.a hardwareLib/libhardwareLib.a mc68k/lib68kEmu.a synthLib/libsynthLib.a baseLib/libbaseLib.a \
+    for l in libnodalred2x_dsp.a mqLib/libmqLib.a wLib/libwLib.a hardwareLib/libhardwareLib.a mc68k/lib68kEmu.a synthLib/libsynthLib.a baseLib/libbaseLib.a \
              libresample/libresample.a dsp56kEmu/libdsp56kEmu.a dsp56kBase/libdsp56kBase.a asmjit/libasmjit.a vtuneSdk/libvtuneSdk.a; do
       [ -f "$B/$l" ] || { echo "missing $B/$l" >&2; exit 1; }
       echo "ADDLIB $B/$l"
@@ -27,13 +27,13 @@ engine() {
   case "${1:-aarch64}" in
     x86)
       cmake -S . -B build/x86 -G Ninja -DCMAKE_BUILD_TYPE=Release -DMPC_VST="$MPC_VST" >/dev/null
-      cmake --build build/x86 --target nordlead_dsp -j"$(nproc)"
+      cmake --build build/x86 --target nodalred2x_dsp -j"$(nproc)"
       merge ar build/x86 ;;
     aarch64)
       docker image inspect $IMAGE >/dev/null 2>&1 || docker build -q -t $IMAGE -f scripts/Dockerfile scripts
       docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/b -v "$MPC_VST":/mv:ro -w /b $IMAGE bash -euc '
         cmake -S . -B build/a64 -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DMPC_VST=/mv >/dev/null
-        cmake --build build/a64 --target nordlead_dsp -j"$(nproc)"'
+        cmake --build build/a64 --target nodalred2x_dsp -j"$(nproc)"'
       merge "docker run --rm -i -u $(id -u):$(id -g) -v $PWD:/b -w /b $IMAGE aarch64-linux-gnu-ar" build/a64 ;;
     *) echo "unknown arch $1" >&2; exit 1 ;;
   esac
