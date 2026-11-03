@@ -56,3 +56,7 @@ target_link_libraries(nodalred2x_bench PRIVATE n2xLib hardwareLib 68kEmu synthLi
 add_executable(nodalred2x_lifecycle test/lifecycle.cpp)
 target_include_directories(nodalred2x_lifecycle PRIVATE ${GM}/claudia/n2x)
 target_link_libraries(nodalred2x_lifecycle PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)
+
+add_executable(nodalred2x_profile test/profile.cpp)
+target_include_directories(nodalred2x_profile PRIVATE ${GM}/claudia/n2x)
+target_link_libraries(nodalred2x_profile PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)
