@@ -16,7 +16,7 @@ controller and two DSP56362 voice DSPs). "NodalRed2x" is gearmulator's name for 
 - **Favourites in the MPC PRESET menu:** press **+FAV** on any sound to save it, then pick it from MPC's own preset list. **-FAV** removes it.
   Up to 64 favourites, kept across projects.
 - **A complete editor on the touchscreen:** 7 pages.
-  - **MAIN:** bank and sound, status, PANIC, RELOAD and 18 quick-edit knobs
+  - **MAIN:** bank and sound; the original's performance section (master level, display, play mode, portamento, unison detune, octave shift, mod wheel destination) and 8 quick-edit knobs
   - **BANKS:** the bank list and a sound browser, 30 sounds a page, favourites
   - **OSC**, **FILTER**, **AMP**, **MOD** (both LFOs, mod envelope, mod wheel, arpeggiator) and **MORPH** (the 25 morph amounts)
 - **Follows MPC's tempo:** while MPC plays, a synced LFO 2 and the arpeggiator run at MPC's tempo.
