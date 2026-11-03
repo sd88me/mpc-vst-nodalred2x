@@ -26,7 +26,7 @@ controller and two DSP56362 voice DSPs). "NodalRed2x" is gearmulator's name for 
 ![BANKS page](docs/screenshots/banks.png)
 
 ## Requirements
-- An MPC Gen2 standalone device (aarch64, e.g. MPC Live III) running **MPC OS 3.10.1 or later**. Gen1 devices and the Force aren't supported.
+- An MPC Gen2 standalone device (aarch64, e.g. MPC Live III) running **MPC OS 3.10 or later**. Gen1 devices and the Force aren't supported.
 - **Your own Nord Lead 2x ROM:** a 512 kB flash dump (`.bin`). No ROM is included, and none may be shared.
 - This is the heaviest synth port of the family: it needs about one and a half of the fast cores' worth of CPU, so keep an eye on the DROPOUTS readout.
 
