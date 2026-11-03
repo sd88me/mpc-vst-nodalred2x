@@ -1,0 +1,1422 @@
+{
+ "name": "NodalRed2x",
+ "params": [
+  {
+   "key": "bank_index",
+   "name": "BANK",
+   "min": 0,
+   "max": 63,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "preset",
+   "name": "PRESET",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "bank_name",
+   "name": "BANK NAME",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "preset_name",
+   "name": "PRESET NAME",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_prev",
+   "name": "BANK -",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "bank_next",
+   "name": "BANK +",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "preset_prev",
+   "name": "PRESET -",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "preset_next",
+   "name": "PRESET +",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "all_notes_off",
+   "name": "PANIC",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "rom_name",
+   "name": "ROM",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "loading_status",
+   "name": "STATUS",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "engine_stats",
+   "name": "STATS",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "gain",
+   "name": "GAIN %",
+   "min": 10,
+   "max": 400,
+   "default": 70,
+   "display": "int"
+  },
+  {
+   "key": "init_patch",
+   "name": "RELOAD",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "O2Pitch",
+   "name": "Osc 2 Pitch",
+   "min": -60,
+   "max": 60,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "O2PitchFine",
+   "name": "Osc 2 Fine",
+   "min": -64,
+   "max": 63,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Mix",
+   "name": "Osc Mix",
+   "min": -64,
+   "max": 63,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Cutoff",
+   "name": "Cutoff",
+   "min": 0,
+   "max": 127,
+   "default": 127,
+   "display": "int"
+  },
+  {
+   "key": "Resonance",
+   "name": "Resonance",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvAmount",
+   "name": "Filter Env Amt",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "PW",
+   "name": "Pulse Width",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FmDepth",
+   "name": "FM Amount",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvA",
+   "name": "Filter Env A",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvD",
+   "name": "Filter Env D",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvS",
+   "name": "Filter Env S",
+   "min": 0,
+   "max": 127,
+   "default": 127,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvR",
+   "name": "Filter Env R",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvA",
+   "name": "Amp Env A",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvD",
+   "name": "Amp Env D",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvS",
+   "name": "Amp Env S",
+   "min": 0,
+   "max": 127,
+   "default": 127,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvR",
+   "name": "Amp Env R",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Portamento",
+   "name": "Portamento",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Gain",
+   "name": "Gain",
+   "min": 0,
+   "max": 127,
+   "default": 127,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvA",
+   "name": "Mod Env A",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvD",
+   "name": "Mod Env D",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvLevel",
+   "name": "Mod Env Amount",
+   "min": -64,
+   "max": 63,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo1Rate",
+   "name": "LFO 1 Rate",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo1Level",
+   "name": "LFO 1 Amount",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo2Rate",
+   "name": "LFO 2 Rate",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ArpRange",
+   "name": "Arp Range",
+   "min": 0,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "O2PitchSens",
+   "name": "Morph Osc 2 Pitch",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "O2PitchFineSens",
+   "name": "Morph Osc 2 Fine",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "MixSens",
+   "name": "Morph Osc Mix",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "CutoffSens",
+   "name": "Morph Cutoff",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ResonanceSens",
+   "name": "Morph Resonance",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvAmountSens",
+   "name": "Morph Filter Env Amt",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "PWSens",
+   "name": "Morph Pulse Width",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FmDepthSens",
+   "name": "Morph FM Amount",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvASens",
+   "name": "Morph Filter Env A",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvDSens",
+   "name": "Morph Filter Env D",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvSSens",
+   "name": "Morph Filter Env S",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "FilterEnvRSens",
+   "name": "Morph Filter Env R",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvASens",
+   "name": "Morph Amp Env A",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvDSens",
+   "name": "Morph Amp Env D",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvSSens",
+   "name": "Morph Amp Env S",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "AmpEnvRSens",
+   "name": "Morph Amp Env R",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "PortamentoSens",
+   "name": "Morph Portamento",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "GainSens",
+   "name": "Morph Gain",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvASens",
+   "name": "Morph Mod Env A",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvDSens",
+   "name": "Morph Mod Env D",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ModEnvLevelSens",
+   "name": "Morph Mod Env Amount",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo1RateSens",
+   "name": "Morph LFO 1 Rate",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo1LevelSens",
+   "name": "Morph LFO 1 Amount",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "Lfo2RateSens",
+   "name": "Morph LFO 2 Rate",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "ArpRangeSens",
+   "name": "Morph Arp Range",
+   "min": -128,
+   "max": 127,
+   "default": 0,
+   "display": "int"
+  },
+  {
+   "key": "O1Waveform",
+   "name": "Osc 1 Wave",
+   "options": [
+    "Pulse",
+    "Saw",
+    "Triangle",
+    "Sine"
+   ],
+   "default": "Pulse"
+  },
+  {
+   "key": "O2Waveform",
+   "name": "Osc 2 Wave",
+   "options": [
+    "Pulse",
+    "Saw",
+    "Triangle",
+    "Noise"
+   ],
+   "default": "Pulse"
+  },
+  {
+   "key": "Distortion",
+   "name": "Distortion",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "RingMod",
+   "name": "Ring Mod",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "Sync",
+   "name": "Sync",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "FilterType",
+   "name": "Filter Type",
+   "options": [
+    "LP 12 dB",
+    "LP 24 dB",
+    "HP 24 dB",
+    "Band Pass",
+    "Notch + LP",
+    "Notch"
+   ],
+   "default": "LP 12 dB"
+  },
+  {
+   "key": "O2Keytrack",
+   "name": "Osc 2 Keytrack",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "FilterKeytrack",
+   "name": "Filter Keytrack",
+   "options": [
+    "Off",
+    "1/3",
+    "2/3",
+    "Full"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "Lfo1Waveform",
+   "name": "LFO 1 Waveform",
+   "options": [
+    "Steps",
+    "Saw",
+    "Triangle",
+    "Square",
+    "Random"
+   ],
+   "default": "Steps"
+  },
+  {
+   "key": "Lfo1Dest",
+   "name": "LFO 1 Dest",
+   "options": [
+    "PW",
+    "Filter",
+    "Osc 2",
+    "Osc 1+2",
+    "FM"
+   ],
+   "default": "PW"
+  },
+  {
+   "key": "VoiceMode",
+   "name": "Voice Mode",
+   "options": [
+    "Mono",
+    "Legato",
+    "Poly"
+   ],
+   "default": "Mono"
+  },
+  {
+   "key": "ModWheelDest",
+   "name": "Mod Wheel Dest",
+   "options": [
+    "Filter",
+    "FM",
+    "Osc 2",
+    "LFO 1",
+    "Morph"
+   ],
+   "default": "Filter"
+  },
+  {
+   "key": "Unison",
+   "name": "Unison",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "ModEnvDest",
+   "name": "Mod Env Dest",
+   "options": [
+    "Osc 2",
+    "FM",
+    "PW"
+   ],
+   "default": "Osc 2"
+  },
+  {
+   "key": "Auto",
+   "name": "Auto Glide",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "FilterVelocity",
+   "name": "Filter Velocity",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "OctaveShift",
+   "name": "Octave Shift",
+   "options": [
+    "-2",
+    "-1",
+    "0",
+    "+1",
+    "+2"
+   ],
+   "default": "0"
+  },
+  {
+   "key": "Lfo2Dest",
+   "name": "LFO 2 / Arp",
+   "options": [
+    "Arp Down",
+    "Arp Up",
+    "Arp Up/Down",
+    "LFO 2 Amp",
+    "LFO 2 Osc 1+2",
+    "Arp Random",
+    "Arp Echo",
+    "LFO 2 Filter",
+    "Arp Mode 8"
+   ],
+   "default": "Arp Down"
+  },
+  {
+   "key": "lfo1_sync",
+   "name": "LFO 1 Sync",
+   "options": [
+    "Off",
+    "2/1",
+    "1/1",
+    "1/2",
+    "1/4",
+    "1/8",
+    "1/8.",
+    "1/16"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "lfo2_sync",
+   "name": "LFO 2 / Arp Sync",
+   "options": [
+    "Off",
+    "2/1",
+    "1/1",
+    "1/2",
+    "1/4",
+    "1/8",
+    "1/8.",
+    "1/16"
+   ],
+   "default": "Off"
+  },
+  {
+   "key": "bend_range",
+   "name": "Bend Range",
+   "min": 0,
+   "max": 8,
+   "default": 2,
+   "display": "int"
+  },
+  {
+   "key": "unison_detune",
+   "name": "Unison Detune",
+   "min": 0,
+   "max": 8,
+   "default": 2,
+   "display": "int"
+  },
+  {
+   "key": "bank_slot_1",
+   "name": "BANK 1",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_2",
+   "name": "BANK 2",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_3",
+   "name": "BANK 3",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_4",
+   "name": "BANK 4",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_5",
+   "name": "BANK 5",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_6",
+   "name": "BANK 6",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_7",
+   "name": "BANK 7",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_8",
+   "name": "BANK 8",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_9",
+   "name": "BANK 9",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_slot_10",
+   "name": "BANK 10",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_1",
+   "name": "PATCH 1",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_2",
+   "name": "PATCH 2",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_3",
+   "name": "PATCH 3",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_4",
+   "name": "PATCH 4",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_5",
+   "name": "PATCH 5",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_6",
+   "name": "PATCH 6",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_7",
+   "name": "PATCH 7",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_8",
+   "name": "PATCH 8",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_9",
+   "name": "PATCH 9",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_10",
+   "name": "PATCH 10",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_11",
+   "name": "PATCH 11",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_12",
+   "name": "PATCH 12",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_13",
+   "name": "PATCH 13",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_14",
+   "name": "PATCH 14",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_15",
+   "name": "PATCH 15",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_16",
+   "name": "PATCH 16",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_17",
+   "name": "PATCH 17",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_18",
+   "name": "PATCH 18",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_19",
+   "name": "PATCH 19",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_20",
+   "name": "PATCH 20",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_21",
+   "name": "PATCH 21",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_22",
+   "name": "PATCH 22",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_23",
+   "name": "PATCH 23",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_24",
+   "name": "PATCH 24",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_25",
+   "name": "PATCH 25",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_26",
+   "name": "PATCH 26",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_27",
+   "name": "PATCH 27",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_28",
+   "name": "PATCH 28",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_29",
+   "name": "PATCH 29",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_slot_30",
+   "name": "PATCH 30",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_page_text",
+   "name": "PAGE",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "patch_page_prev",
+   "name": "PAGE -",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "patch_page_next",
+   "name": "PAGE +",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "favourite",
+   "name": "FAVOURITE",
+   "min": 0,
+   "max": 63,
+   "default": 63,
+   "display": "int"
+  },
+  {
+   "key": "fav_save",
+   "name": "SAVE FAV",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "fav_delete",
+   "name": "DEL FAV",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "fav_text",
+   "name": "FAVOURITES",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_page_text",
+   "name": "BANK PAGE",
+   "min": 0,
+   "max": 0,
+   "default": 0,
+   "display": "string",
+   "poll": true
+  },
+  {
+   "key": "bank_page_prev",
+   "name": "BANK PAGE -",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  },
+  {
+   "key": "bank_page_next",
+   "name": "BANK PAGE +",
+   "min": 0,
+   "max": 1,
+   "default": 0,
+   "momentary": true
+  }
+ ],
+ "sections": [
+  {
+   "label": "Browse",
+   "keys": [
+    "bank_index",
+    "preset",
+    "bank_name",
+    "preset_name",
+    "bank_prev",
+    "bank_next",
+    "preset_prev",
+    "preset_next",
+    "all_notes_off"
+   ]
+  },
+  {
+   "label": "Banks",
+   "keys": [
+    "bank_slot_1",
+    "bank_slot_2",
+    "bank_slot_3",
+    "bank_slot_4",
+    "bank_slot_5",
+    "bank_slot_6",
+    "bank_slot_7",
+    "bank_slot_8",
+    "bank_slot_9",
+    "bank_slot_10",
+    "patch_slot_1",
+    "patch_slot_2",
+    "patch_slot_3",
+    "patch_slot_4",
+    "patch_slot_5",
+    "patch_slot_6",
+    "patch_slot_7",
+    "patch_slot_8",
+    "patch_slot_9",
+    "patch_slot_10",
+    "patch_slot_11",
+    "patch_slot_12",
+    "patch_slot_13",
+    "patch_slot_14",
+    "patch_slot_15",
+    "patch_slot_16",
+    "patch_slot_17",
+    "patch_slot_18",
+    "patch_slot_19",
+    "patch_slot_20",
+    "patch_slot_21",
+    "patch_slot_22",
+    "patch_slot_23",
+    "patch_slot_24",
+    "patch_slot_25",
+    "patch_slot_26",
+    "patch_slot_27",
+    "patch_slot_28",
+    "patch_slot_29",
+    "patch_slot_30",
+    "patch_page_text",
+    "patch_page_prev",
+    "patch_page_next",
+    "favourite",
+    "fav_save",
+    "fav_delete",
+    "fav_text",
+    "bank_page_text",
+    "bank_page_prev",
+    "bank_page_next"
+   ]
+  },
+  {
+   "label": "System",
+   "keys": [
+    "rom_name",
+    "loading_status",
+    "engine_stats",
+    "gain",
+    "init_patch"
+   ]
+  },
+  {
+   "label": "Osc",
+   "keys": [
+    "O2Pitch",
+    "O2PitchFine",
+    "Mix",
+    "PW",
+    "FmDepth",
+    "O1Waveform",
+    "O2Waveform",
+    "RingMod",
+    "Sync",
+    "O2Keytrack"
+   ]
+  },
+  {
+   "label": "Filter",
+   "keys": [
+    "Cutoff",
+    "Resonance",
+    "FilterEnvAmount",
+    "FilterEnvA",
+    "FilterEnvD",
+    "FilterEnvS",
+    "FilterEnvR",
+    "Distortion",
+    "FilterType",
+    "FilterKeytrack",
+    "FilterVelocity"
+   ]
+  },
+  {
+   "label": "Amp",
+   "keys": [
+    "AmpEnvA",
+    "AmpEnvD",
+    "AmpEnvS",
+    "AmpEnvR",
+    "Portamento",
+    "Gain",
+    "VoiceMode",
+    "Unison",
+    "Auto",
+    "OctaveShift"
+   ]
+  },
+  {
+   "label": "Mod",
+   "keys": [
+    "ModEnvA",
+    "ModEnvD",
+    "ModEnvLevel",
+    "Lfo1Rate",
+    "Lfo1Level",
+    "Lfo2Rate",
+    "ArpRange",
+    "Lfo1Waveform",
+    "Lfo1Dest",
+    "ModWheelDest",
+    "ModEnvDest",
+    "Lfo2Dest",
+    "lfo1_sync",
+    "lfo2_sync",
+    "bend_range",
+    "unison_detune"
+   ]
+  },
+  {
+   "label": "Morph",
+   "keys": [
+    "O2PitchSens",
+    "O2PitchFineSens",
+    "MixSens",
+    "CutoffSens",
+    "ResonanceSens",
+    "FilterEnvAmountSens",
+    "PWSens",
+    "FmDepthSens",
+    "FilterEnvASens",
+    "FilterEnvDSens",
+    "FilterEnvSSens",
+    "FilterEnvRSens",
+    "AmpEnvASens",
+    "AmpEnvDSens",
+    "AmpEnvSSens",
+    "AmpEnvRSens",
+    "PortamentoSens",
+    "GainSens",
+    "ModEnvASens",
+    "ModEnvDSens",
+    "ModEnvLevelSens",
+    "Lfo1RateSens",
+    "Lfo1LevelSens",
+    "Lfo2RateSens",
+    "ArpRangeSens"
+   ]
+  }
+ ]
+}

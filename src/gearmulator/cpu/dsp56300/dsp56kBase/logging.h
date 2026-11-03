@@ -16,6 +16,7 @@ namespace Logging
 #define LOGTOCONSOLE(ss)	{ Logging::g_logToConsole( (ss).str() ); }
 #define LOGTOFILE(ss)		{ Logging::g_logToFile( (ss).str() ); }
 
+#ifdef GM_LOG_ENABLED
 #define LOG(S)																												\
 do																															\
 {																															\
@@ -24,6 +25,9 @@ do																															\
 	LOGTOCONSOLE(__ss__logging_h)																							\
 }																															\
 while(false)
+#else
+#define LOG(S) do { } while(false)
+#endif
 
 #define LOGF(S)																												\
 do																															\

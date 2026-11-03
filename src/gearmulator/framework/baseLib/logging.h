@@ -16,6 +16,7 @@ namespace baseLib::logging
 #define LOGTOCONSOLE(ss)	{ baseLib::logging::logToConsole( (ss).str() ); }
 #define LOGTOFILE(ss)		{ baseLib::logging::logToFile( (ss).str() ); }
 
+#ifdef GM_LOG_ENABLED
 #define LOG(S)																												\
 do																															\
 {																															\
@@ -24,6 +25,9 @@ do																															\
 	LOGTOCONSOLE(__ss__logging_h)																							\
 }																															\
 while(false)
+#else
+#define LOG(S) do { } while(false)
+#endif
 
 #define LOGF(S)																												\
 do																															\

@@ -36,6 +36,17 @@ if(NOT MPC_VST)
   set(MPC_VST $ENV{HOME}/mpc-vst-plugins)
 endif()
 
+# The engine: src/dsp's glue, in-process. build.sh links it with wrapper/vst2_wrap.c into nodalred2x.so.
+if(NOT MPC_VST)
+  set(MPC_VST $ENV{HOME}/mpc-vst-plugins)
+endif()
+add_library(nodalred2x_dsp STATIC src/dsp/nodalred2x_engine.cpp)
+target_include_directories(nodalred2x_dsp PUBLIC ${GM}/framework ${GM}/cpu ${GM}/cpu/dsp56300 ${GM}/claudia/n2x src/dsp ${MPC_VST}/wrapper)
+target_link_libraries(nodalred2x_dsp PUBLIC n2xLib hardwareLib 68kEmu synthLib baseLib)
+
+add_executable(nodalred2x_engine_test test/engine_test.cpp)
+target_link_libraries(nodalred2x_engine_test PRIVATE nodalred2x_dsp)
+
 add_executable(nodalred2x_bench test/bench.cpp)
 target_include_directories(nodalred2x_bench PRIVATE ${GM}/claudia/n2x)
 target_link_libraries(nodalred2x_bench PRIVATE n2xLib hardwareLib 68kEmu synthLib baseLib)
