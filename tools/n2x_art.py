@@ -113,6 +113,24 @@ def plain_text(im, cx, cy, text, size=16, colour=WHITE, width=200):
     ImageDraw.Draw(im).text((cx, cy), text, font=f, fill=colour + (255,), anchor="mm")
 
 
+def notice(im, x0, y0, x1, y1, title, lines, size=15):
+    """a small information badge in the skin's colours: a charcoal card, a slate title strip with the title in white oblique capitals,
+    the text centred under it in white"""
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((x0 + 2, y0 + 3, x1 + 2, y1 + 3), 8, fill=(0, 0, 0, 70))
+    d.rounded_rectangle((x0, y0, x1, y1), 8, fill=CHAR + (255,))
+    d.rounded_rectangle((x0, y0, x1, y0 + 26), 8, fill=SLATE + (255,))
+    d.rectangle((x0, y0 + 16, x1, y0 + 26), fill=SLATE + (255,))
+    t = text_img(title.upper(), 15, WHITE, slant=0.2)
+    im.alpha_composite(t, ((x0 + x1) // 2 - t.width // 2, y0 + 13 - t.height // 2))
+    d = ImageDraw.Draw(im)
+    lh = size + 6
+    top = (y0 + 26 + y1) // 2 - lh * len(lines) // 2 + lh // 2
+    for i, ln in enumerate(lines):
+        f = fit(ln, size, x1 - x0 - 16, bold=False)
+        d.text(((x0 + x1) // 2, top + i * lh), ln, font=f, fill=WHITE + (255,), anchor="mm")
+
+
 def value_box(im, cx, cy, w=68, h=26):
     """the light box a value sits in under a knob on charcoal"""
     ImageDraw.Draw(im).rounded_rectangle((cx - w // 2, cy - h // 2, cx + w // 2, cy + h // 2), 4, fill=VALUE_BOX + (255,))

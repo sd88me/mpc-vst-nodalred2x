@@ -530,9 +530,8 @@ def page_morph(fn):
             keys = [k for k, _ in knobs]
             for i in range(0, len(keys), 4):
                 blocks.append(keys[i:i + 4])
-    A.plain_text(pg.art, 1150, 8 + 206 + 100, "how far each value", size=15, colour=A.INK, width=200)
-    A.plain_text(pg.art, 1150, 8 + 206 + 122, "moves with the mod", size=15, colour=A.INK, width=200)
-    A.plain_text(pg.art, 1150, 8 + 206 + 144, "wheel set to Morph", size=15, colour=A.INK, width=200)
+    A.notice(pg.art, 1050, 8 + 206 + 46, 1256, 8 + 206 + 184, "Morph amounts",
+             ["How far each value moves", "as the mod wheel turns,", "with MOD W DEST on Morph."])
     for i, bl in enumerate(blocks):
         if i and i % 4 == 0:
             pg.subtab()
