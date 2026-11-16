@@ -198,7 +198,8 @@ class Page:
         self.kids.append(entry(key, kname(size), {"version": 1, "handleName": "Data"},
                                "%d %d %d %d" % (cx - size // 2, cy - size // 2, size, size), remap=P(key), focus="Yes"))
         self.kids.append(label("%d %d 100 26" % (cx - 50, cy + r + 23), key, 24, hexcol(A.INK), style="Bold"))
-        self.pos[key] = (cx - 62, cy - r - (76 if stage else 54), cx + 62, cy + r + 50)
+        hw = 62 if size >= KNOB else 56
+        self.pos[key] = (cx - hw, cy - r - (76 if stage else 54), cx + hw, cy + r + 50)
 
     def leds(self, key, x, y, w, cap=None, rh=28, labels=None, cols=1, order=None, navy=False, cyc=True):
         """a choice as the original skin's segmented buttons: one slate button per option, red while it is the choice (radio Buttons)"""
@@ -502,7 +503,44 @@ def page_mod(fn):
     return pg
 
 
-PAGES = [("MAIN", page_main), ("BANKS", page_banks), ("OSC/FILTER", page_oscfilter), ("AMP/MOD", page_mod)]
+def page_morph(fn):
+    """MORPH: how far each parameter moves with the morph source (velocity or the mod wheel), as on the panel (hold the morph button and
+    turn a knob there): rows of sections, OSC | AMP, FILTER | VOICE, MOD; every amount -128 .. +127."""
+    pg = Page("MORPH", fn)
+    M = 72
+    rows = [
+        [("osc", 10, 630, [("O2PitchSens", "Semitones"), ("O2PitchFineSens", "Fine Tune"), ("MixSens", "Mix"), ("PWSens", "Pulse Width"), ("FmDepthSens", "FM Amount")]),
+         ("amplifier", 640, 1270, [("AmpEnvASens", "Attack"), ("AmpEnvDSens", "Decay"), ("AmpEnvSSens", "Sustain"), ("AmpEnvRSens", "Release"), ("GainSens", "Gain")])],
+        [("filter", 10, 890, [("CutoffSens", "Frequency"), ("ResonanceSens", "Resonance"), ("FilterEnvAmountSens", "Env Amount"), ("FilterEnvASens", "F.Attack"),
+                              ("FilterEnvDSens", "F.Decay"), ("FilterEnvSSens", "F.Sustain"), ("FilterEnvRSens", "F.Release")]),
+         ("voice", 900, 1270, [("PortamentoSens", "Portamento")])],
+        [("mod", 10, 1270, [("ModEnvASens", "M.Env Attack"), ("ModEnvDSens", "M.Env Decay"), ("ModEnvLevelSens", "M.Env Amount"), ("Lfo1RateSens", "LFO 1 Rate"),
+                            ("Lfo1LevelSens", "LFO 1 Amount"), ("Lfo2RateSens", "LFO 2 Rate"), ("ArpRangeSens", "Arp Range")])]]
+    blocks = []
+    for r, row in enumerate(rows):
+        y0 = 8 + r * 206
+        for title, x0, x1, knobs in row:
+            pg.section(x0, y0, x1, y0 + 198, title)
+            pitch = min(170, (x1 - x0 - 20) // max(len(knobs), 2))
+            xs = [x0 + 10 + pitch // 2 + i * pitch for i in range(len(knobs))]
+            if len(knobs) == 1:
+                xs = [x0 + 90]
+            for (k, c), x in zip(knobs, xs):
+                pg.knob(k, x, y0 + 112, c, size=M)
+            keys = [k for k, _ in knobs]
+            for i in range(0, len(keys), 4):
+                blocks.append(keys[i:i + 4])
+    A.plain_text(pg.art, 1150, 8 + 206 + 100, "how far each value", size=15, colour=A.INK, width=200)
+    A.plain_text(pg.art, 1150, 8 + 206 + 122, "moves with the mod", size=15, colour=A.INK, width=200)
+    A.plain_text(pg.art, 1150, 8 + 206 + 144, "wheel set to Morph", size=15, colour=A.INK, width=200)
+    for i, bl in enumerate(blocks):
+        if i and i % 4 == 0:
+            pg.subtab()
+        pg.block(bl, pad=1)
+    return pg
+
+
+PAGES = [("MAIN", page_main), ("BANKS", page_banks), ("OSC/FILTER", page_oscfilter), ("AMP/MOD", page_mod), ("MORPH", page_morph)]
 
 
 def qlinks_for(pages):
