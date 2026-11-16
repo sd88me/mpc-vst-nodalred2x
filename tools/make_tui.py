@@ -311,14 +311,16 @@ def page_main(fn):
     for i, (k, cap) in enumerate(FAV_KEYS):
         pg.key(k, 80 + i * 150, 318, cap, w=138, h=40)
     pg.kids.append(label("168 238 392 22", "fav_text", 16, hexcol(A.INK_ON_NAVY)))
-    ry = 384
-    pg.leds_n("VoiceMode", 24, ry, 130, "PLAY MODE", rh=34, order=[0, 1, 2], labels=["Mono", "Legato", "Poly"])
-    pg.knob("Portamento", 250, ry + 50, "PORTAMENTO", navy=True)
-    pg.toggle("Auto", 250, ry + 176, "AUTO")
-    pg.knob("unison_detune", 400, ry + 50, "DETUNE", navy=True)
-    pg.toggle("Unison", 400, ry + 176, "UNISON")
-    pg.leds_n("OctaveShift", 486, ry, 120, "OCT SHIFT", rh=32)
-    pg.leds_n("ModWheelDest", 626, ry, 136, "MOD W DEST", rh=32, labels=["Filter", "FM", "Osc 2", "LFO 1", "Morph"])
+    # the performance row: every column centred on the same line in the space under the keys (y 344 .. 612)
+    yc = 478
+    pg.leds_n("VoiceMode", 24, yc - 80 + 32, 130, "PLAY MODE", rh=32, order=[0, 1, 2], labels=["Mono", "Legato", "Poly"])
+    kcy, tcy = yc - 118 + 82, yc - 118 + 82 + 78 + 12 + 48             # knob over its switch: 236 px tall together
+    pg.knob("Portamento", 250, kcy, "PORTAMENTO", navy=True)
+    pg.toggle("Auto", 250, tcy, "AUTO")
+    pg.knob("unison_detune", 400, kcy, "DETUNE", navy=True)
+    pg.toggle("Unison", 400, tcy, "UNISON")
+    pg.leds_n("OctaveShift", 486, yc - 107 + 32, 120, "OCT SHIFT", rh=30)
+    pg.leds_n("ModWheelDest", 626, yc - 107 + 32, 136, "MOD W DEST", rh=30, labels=["Filter", "FM", "Osc 2", "LFO 1", "Morph"])
     pg.section(786, 112, 1272, 620, "quick edit")
     a = [("Cutoff", "Cutoff"), ("Resonance", "Resonance"), ("FilterEnvAmount", "Env Amt"), ("FilterEnvD", "F.Decay")]
     b = [("AmpEnvA", "Attack"), ("AmpEnvR", "Release"), ("Mix", "Osc Mix"), ("Lfo1Rate", "LFO 1 Rate")]
@@ -440,33 +442,33 @@ def keyboard(pg):
 
 
 def page_oscfilter(fn):
-    """OSC & FILTER, the middle of the panel: OSC 1 | OSC 2 | MIX along the top, the FILTER under them (type, frequency, resonance,
-    envelope amount, keyboard tracking, velocity, distortion, its envelope)."""
+    """OSC & FILTER, the middle of the panel: OSC 1 | OSC 2 | MIX along the top, the FILTER under them (type and keyboard-tracking
+    LEDs, then frequency, resonance, envelope amount, velocity and distortion over the filter envelope). Every column is centred
+    in its section's height."""
     pg = Page("OSC/FILTER", fn)
     pg.section(10, 8, 400, 236, "osc 1")
-    pg.leds("O1Waveform", 24, 78, 130, "WAVEFORM")
-    pg.knob("FmDepth", 232, 136, "FM Amount")
-    pg.knob("PW", 340, 136, "Pulse Width")
+    pg.leds("O1Waveform", 26, 81, 130, "WAVEFORM")
+    pg.knob("FmDepth", 232, 139, "FM Amount")
+    pg.knob("PW", 340, 139, "Pulse Width")
     pg.section(410, 8, 990, 236, "osc 2")
-    pg.leds("O2Waveform", 424, 78, 130, "WAVEFORM")
-    pg.toggle("O2Keytrack", 610, 90, "KBD TRACK")
-    pg.toggle("Sync", 610, 152, "SYNC")
-    pg.toggle("RingMod", 610, 214, "RING MOD")
-    pg.knob("O2Pitch", 760, 136, "Semitones")
-    pg.knob("O2PitchFine", 890, 136, "Fine Tune")
+    pg.leds("O2Waveform", 426, 81, 130, "WAVEFORM")
+    pg.toggle("O2Keytrack", 618, 92, "KBD TRACK")
+    pg.toggle("Sync", 618, 154, "SYNC")
+    pg.toggle("RingMod", 618, 216, "RING MOD")
+    pg.knob("O2Pitch", 770, 139, "Semitones")
+    pg.knob("O2PitchFine", 900, 139, "Fine Tune")
     pg.section(1000, 8, 1270, 236, "mix")
-    pg.knob("Mix", 1135, 136, "Osc 1 / Osc 2")
+    pg.knob("Mix", 1135, 139, "Osc 1 / Osc 2")
     pg.section(10, 246, 1270, 618, "filter")
-    pg.leds("FilterType", 24, 306, 140, "FILTER TYPE", order=[2, 1, 0, 3, 4, 5], labels=["LP 12 dB", "LP 24 dB", "HP 24 dB", "Band Pass", "Notch + LP", "Notch"])
-    pg.leds("FilterKeytrack", 186, 306, 110, "KBD TRACK", order=[3, 2, 1, 0], labels=["Off", "1/3", "2/3", "Full"])
-    pg.toggle("FilterVelocity", 370, 330, "VELOCITY")
-    pg.toggle("Distortion", 370, 410, "DISTORTION")
-    ky = 362
-    for i, (k, c) in enumerate((("Cutoff", "Frequency"), ("Resonance", "Resonance"), ("FilterEnvAmount", "Env Amount"))):
-        pg.knob(k, 530 + i * 150, ky, c)
-    ky2 = 540
-    for i, (k, c) in enumerate((("FilterEnvA", "Attack"), ("FilterEnvD", "Decay"), ("FilterEnvS", "Sustain"), ("FilterEnvR", "Release"))):
-        pg.knob(k, 530 + i * 150, ky2, c)
+    pg.leds("FilterType", 40, 357, 150, "FILTER TYPE", rh=30, order=[2, 1, 0, 3, 4, 5], labels=["LP 12 dB", "LP 24 dB", "HP 24 dB", "Band Pass", "Notch + LP", "Notch"])
+    pg.leds("FilterKeytrack", 236, 387, 120, "KBD TRACK", rh=30, order=[3, 2, 1, 0], labels=["Off", "1/3", "2/3", "Full"])
+    xs = (560, 750, 940, 1130)
+    for x, (k, c) in zip(xs, (("Cutoff", "Frequency"), ("Resonance", "Resonance"), ("FilterEnvAmount", "Env Amount"))):
+        pg.knob(k, x, 358, c)
+    pg.toggle("FilterVelocity", xs[3], 325, "VELOCITY")
+    pg.toggle("Distortion", xs[3], 419, "DISTORTION")
+    for x, (k, c) in zip(xs, (("FilterEnvA", "Attack"), ("FilterEnvD", "Decay"), ("FilterEnvS", "Sustain"), ("FilterEnvR", "Release"))):
+        pg.knob(k, x, 540, c)
     pg.block(["FmDepth", "PW"]); pg.block(["O2Pitch", "O2PitchFine"]); pg.block(["Mix"])
     pg.block(["Cutoff", "Resonance", "FilterEnvAmount"])
     pg.subtab()
@@ -476,27 +478,27 @@ def page_oscfilter(fn):
 
 def page_mod(fn):
     """AMP & MOD: the AMPLIFIER (ADSR, gain) and the MOD ENV along the top; LFO 1 and LFO 2 / ARPEGGIATOR under them, each with its LED
-    choices and cycle keys, the knobs at its right."""
+    choices and cycle keys spread across the section, rate and amount stacked at its right, all centred in the section's height."""
     pg = Page("AMP/MOD", fn)
     pg.section(10, 8, 760, 250, "amplifier")
     for i, (k, c) in enumerate((("AmpEnvA", "Attack"), ("AmpEnvD", "Decay"), ("AmpEnvS", "Sustain"), ("AmpEnvR", "Release"), ("Gain", "Gain"))):
         pg.knob(k, 90 + i * 145, 156, c)
     pg.section(770, 8, 1270, 250, "mod env")
-    pg.leds("ModEnvDest", 784, 92, 110, "DEST", labels=["Osc 2", "FM", "PW"])
+    pg.leds("ModEnvDest", 790, 102, 110, "DEST", labels=["Osc 2", "FM", "PW"])
     pg.knob("ModEnvA", 960, 156, "Attack")
     pg.knob("ModEnvD", 1080, 156, "Decay")
     pg.knob("ModEnvLevel", 1200, 156, "Amount")
     pg.section(10, 260, 630, 618, "lfo 1")
-    pg.leds("Lfo1Waveform", 24, 320, 120, "WAVEFORM")
-    pg.leds("Lfo1Dest", 150, 320, 120, "DEST")
-    pg.leds("lfo1_sync", 280, 320, 90, "SYNC", cols=2)
-    pg.knob("Lfo1Rate", 550, 370, "Rate")
-    pg.knob("Lfo1Level", 550, 530, "Amount")
+    pg.leds("Lfo1Waveform", 30, 384, 124, "WAVEFORM")
+    pg.leds("Lfo1Dest", 172, 384, 124, "DEST")
+    pg.leds("lfo1_sync", 314, 398, 88, "SYNC", cols=2)
+    pg.knob("Lfo1Rate", 555, 376, "Rate")
+    pg.knob("Lfo1Level", 555, 536, "Amount")
     pg.section(640, 260, 1270, 618, "lfo 2 / arpeggiator")
-    pg.leds("Lfo2Dest", 654, 320, 160, "DEST / ARP")
-    pg.leds("lfo2_sync", 830, 320, 90, "SYNC", cols=2)
-    pg.knob("Lfo2Rate", 1170, 370, "Rate")
-    pg.knob("ArpRange", 1170, 530, "Amt / Range")
+    pg.leds("Lfo2Dest", 660, 328, 170, "DEST / ARP")
+    pg.leds("lfo2_sync", 866, 398, 88, "SYNC", cols=2)
+    pg.knob("Lfo2Rate", 1185, 376, "Rate")
+    pg.knob("ArpRange", 1185, 536, "Amt / Range")
     pg.block(["AmpEnvA", "AmpEnvD", "AmpEnvS", "AmpEnvR"]); pg.block(["Gain"]); pg.block(["ModEnvA", "ModEnvD", "ModEnvLevel"])
     pg.subtab()
     pg.block(["Lfo1Rate", "Lfo1Level"]); pg.block(["Lfo2Rate", "ArpRange"])
