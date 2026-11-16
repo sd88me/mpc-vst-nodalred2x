@@ -46,6 +46,7 @@ extern "C" void nodalred2x_render_float(void* inst, float* out, int frames);   /
 #include <mutex>
 #include <string>
 #include <thread>
+#include <sys/stat.h>
 #include <vector>
 
 #ifndef NR2X_NAME
@@ -127,7 +128,14 @@ public:
         // The engine reads <data dir>/roms/; 1.x's data dir was <plugin folder>/nodalred2x (MODULE_SUBDIR). (Not mpc::contentPath(): a
         // function-local static std::string.)
         const std::string folder = mpc::detail::computePluginFolder();
+        // 0.1.0's "VST2 Plugins" zip kept it in <plugin folder>/VST/nodalred2x (beside the .so in VST/): an upgrade in place keeps
+        // using that one while there is no <plugin folder>/nodalred2x (Welle 0.2's rule); the catalog zip had it at the folder root
         dataDir_ = folder + "/nodalred2x";
+        {
+            struct stat st;
+            const std::string old = folder + "/VST/nodalred2x";
+            if (stat(dataDir_.c_str(), &st) != 0 && stat(old.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) dataDir_ = old;
+        }
         eng_ = mpc_engine();
         inst_ = eng_->create(dataDir_.c_str());
         for (int i = 0; i < kFavSlots; ++i) addProgram("--", {});
