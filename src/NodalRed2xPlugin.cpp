@@ -20,6 +20,7 @@
 //     edit (kb_open = 1, the skin shows it; fav_name is the typed text), SAVE stores it under that name ("fav_save_as"), CANCEL closes.
 //     The MPC can report one tap on a drawn key as two presses: a key's repeat within 250 ms is ignored.
 //   * RANDOM (random_patch): the engine's verb, a random sound from every loaded bank.
+//   * <choice>_next (kLocal): a choice's cycle key, as the Nord panel's button beside its LEDs: the next option, round.
 //   * ui_open (kUi): which drawn pick-list the skin shows; the reserved slots (kReserved) hold the 1.x popup flags' indices.
 // Parameter 0 is BANK. The host nudges parameter 0 on every prepare: a change applies only after it has held for ~40 ms.
 // State: the engine's own "state" JSON is the truth; it travels as the MPC chunk's extra state, and nothing is written to the engine
@@ -584,6 +585,19 @@ private:
             { std::lock_guard<std::mutex> g(kbMu_); kbName_ = name; kbShift_ = false; }
             kbOpen_.store(true);
             kbDirty_.store(true);
+            return;
+        }
+        if (index >= kCycleFirst && index < kCycleFirst + kCycleCount)   // a choice's cycle key (the Nord panel's button): the next option, round
+        {
+            const int t = g_cycleTarget[index - kCycleFirst];
+            const PSpec& c = g_pspecs[t];
+            const int n = (int)(c.max - c.min) + 1;
+            char b[24];
+            const int cur = engineGet(c.key, b, sizeof b) ? std::atoi(b) : (int)std::lround(c.min + getNormalised(t) * (c.max - c.min));
+            const float next = c.min + (float)(((int)(cur - c.min) + 1) % n);
+            told_[t] = next;
+            sendValue(t, next);
+            hostMoved_[t].store(true);   // the worker reads it back and tells the host: the LEDs follow
             return;
         }
         if (index >= kKbFirst && index < kKbFirst + kKbCount)

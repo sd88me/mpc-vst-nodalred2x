@@ -140,7 +140,7 @@ int main(int argc, char** argv)
     a->dispatcher(a, effGetEffectName, 0, 0, name, 0);
     CHECK(a->uniqueID == (VstInt32)0x4e6f6452, "uid NodR (%08x)", (unsigned)a->uniqueID);
     CHECK(!std::strcmp(name, NR2X_EXPECT_NAME), "name \"%s\"", name);
-    CHECK(a->numParams == kNumParams && a->numParams == 194, "194 params: 0.1.0's 149 + RANDOM, the naming keyboard (%d)", a->numParams);
+    CHECK(a->numParams == kNumParams && a->numParams == 207, "207 params: 0.1.0's 149 + RANDOM, the naming keyboard, 13 cycle keys (%d)", a->numParams);
     CHECK(a->dispatcher(a, effGetVendorVersion, 0, 0, nullptr, 0) == 200, "version 200 (0.2.0)");
     {
         int bad = 0, i = 0;
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
             i++;
         }
         if (f) std::fclose(f);
-        CHECK(f && bad == 0 && i == 194, "order = params.lock (%d keys, %d differ)", i, bad);
+        CHECK(f && bad == 0 && i == 207, "order = params.lock (%d keys, %d differ)", i, bad);
         CHECK(!std::strcmp(g_pspecs[149].key, "random_patch"), "149 = random_patch (appended)");
         CHECK(!std::strcmp(g_pspecs[0].key, "bank_index") && !std::strcmp(g_pspecs[136].key, "ui_open"), "0 = bank_index, 136 = ui_open");
     }
@@ -201,6 +201,19 @@ int main(int argc, char** argv)
         settle(a);
         CHECK(engi(a, "Cutoff") == (int)cur + 1 && std::lround(plainOf(a, CUT)) == (int)cur + 1,
               "a sub-step nudge up moves one step (%d -> engine %d, host %.0f)", (int)cur, engi(a, "Cutoff"), plainOf(a, CUT));
+    }
+
+    std::printf("== cycle keys\n");
+    {
+        const int NX = idx("FilterType_next");
+        const int t0 = engi(a, "FilterType");
+        tap(a, NX);
+        CHECK(engi(a, "FilterType") == (t0 + 1) % 6 && std::lround(plainOf(a, FTYPE)) == (t0 + 1) % 6 && a->getParameter(a, NX) == 0.f,
+              "FILTER TYPE cycle: %d -> %d, host follows, key back to 0", t0, engi(a, "FilterType"));
+        a->setParameter(a, FTYPE, norm(FTYPE, 5));
+        settle(a);
+        tap(a, NX);
+        CHECK(engi(a, "FilterType") == 0, "the cycle wraps from the last option to the first (%d)", engi(a, "FilterType"));
     }
 
     std::printf("== drawn pick-list flag\n");

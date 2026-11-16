@@ -220,8 +220,21 @@ static const PSpec g_pspecs[] = {
     {"kb_shift", "Key Shift", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
     {"kb_cancel", "Key Cancel", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
     {"kb_save", "Key Save", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"O1Waveform_next", "Next Osc 1 Wave", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"O2Waveform_next", "Next Osc 2 Wave", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"FilterType_next", "Next Filter Type", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"FilterKeytrack_next", "Next Filter Keytrack", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"VoiceMode_next", "Next Voice Mode", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"OctaveShift_next", "Next Octave Shift", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"Lfo1Waveform_next", "Next LFO 1 Waveform", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"Lfo1Dest_next", "Next LFO 1 Dest", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"lfo1_sync_next", "Next LFO 1 Sync", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"ModEnvDest_next", "Next Mod Env Dest", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"ModWheelDest_next", "Next Mod Wheel Dest", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"Lfo2Dest_next", "Next LFO 2 / Arp", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
+    {"lfo2_sync_next", "Next LFO 2 / Arp Sync", 0.0f, 1.0f, 0.0f, 4609, nullptr, 0, -1, 0.0f},
 };
-static const int kNumParams = 194;
+static const int kNumParams = 207;
 static const int kNumEngineParams = 136;   // 0 .. this - 1 are the engine's keys
 static const int kUiParam = 136;            // ui_open: 0 closed, k + 1 = pick-list of g_popups[k]
 static const int kNumPopups = 13;
@@ -232,3 +245,5 @@ static const int kFavSave = 130;            // +FAV (0.1.0's fav_save): opens th
 static const int kFavName = 150, kKbOpen = 151, kKbFirst = 152, kKbCount = 42;
 static const char kKbChars[] = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM-";   // the character keys from kKbFirst, then space, delete, shift, cancel, save
 static const int kFavNameMax = 20;
+static const int kCycleFirst = 194, kCycleCount = 13;   // <choice>_next: the next option of g_cycleTarget[k]
+static const int g_cycleTarget[] = {64, 65, 69, 71, 74, 80, 72, 73, 82, 77, 75, 81, 83};

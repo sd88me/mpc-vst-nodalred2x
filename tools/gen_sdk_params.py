@@ -29,6 +29,11 @@ APPENDED = [                     # (key, name, min, max, default, flags) appende
     ("kb_shift", "Key Shift", 0, 1, 0, 1 | 4096 | 512), ("kb_cancel", "Key Cancel", 0, 1, 0, 1 | 4096 | 512),
     ("kb_save", "Key Save", 0, 1, 0, 1 | 4096 | 512),
 ]
+# a cycle key per choice, as the Nord panel's button beside its LEDs: each press selects the next option (round). kLocal: the plugin
+# steps the choice parameter itself. In the order of the 1.x popups (params.lock's "<key>__open" entries).
+CYCLE = [k[:-len("__open")] for k in LOCK if k.endswith("__open")]
+_names = {p["key"]: p["name"] for p in P}
+APPENDED += [(k + "_next", "Next " + _names[k], 0, 1, 0, 1 | 4096 | 512) for k in CYCLE]
 
 keys = [p["key"] for p in P]
 popups = [k[:-len("__open")] for k in LOCK[len(keys):len(keys) + NPOP]]
@@ -127,6 +132,8 @@ out += ["", "static const PSpec g_pspecs[] = {"] + rows + ["};",
                                                                                       LOCK.index("kb_1"), len(KB_CHARS) + 5),
         "static const char kKbChars[] = %s;   // the character keys from kKbFirst, then space, delete, shift, cancel, save" % json.dumps(KB_CHARS),
         "static const int kFavNameMax = 20;",
+        "static const int kCycleFirst = %d, kCycleCount = %d;   // <choice>_next: the next option of g_cycleTarget[k]" % (LOCK.index(CYCLE[0] + "_next"), len(CYCLE)),
+        "static const int g_cycleTarget[] = {%s};" % ", ".join(str(idx[k]) for k in CYCLE),
         ""]
 open(os.path.join(ROOT, "src", "params_gen.h"), "w").write("\n".join(out))
 print("src/params_gen.h: %d params (%d engine, ui_open, %d reserved, %d appended)" % (len(LOCK), len(P), len(popups) - 1, len(APPENDED)))

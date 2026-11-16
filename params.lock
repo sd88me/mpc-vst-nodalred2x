@@ -192,3 +192,16 @@ kb_bksp
 kb_shift
 kb_cancel
 kb_save
+O1Waveform_next
+O2Waveform_next
+FilterType_next
+FilterKeytrack_next
+VoiceMode_next
+OctaveShift_next
+Lfo1Waveform_next
+Lfo1Dest_next
+lfo1_sync_next
+ModEnvDest_next
+ModWheelDest_next
+Lfo2Dest_next
+lfo2_sync_next
