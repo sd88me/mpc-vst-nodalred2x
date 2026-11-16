@@ -1,0 +1,57 @@
+[
+  {
+    "path": "nodalred2x/roms",
+    "label": "Nord Lead 2x ROM",
+    "description": "NodalRed2x needs the firmware of your own Clavia Nord Lead 2x: a 512 kB flash dump (.bin).",
+    "hint": "Any file name works.",
+    "rules": [
+      {
+        "label": "Nord Lead 2x flash ROM (512 kB)",
+        "ext": [
+          ".bin"
+        ],
+        "size": 524288,
+        "unverified": true,
+        "note": "The right size for a Nord Lead 2x flash dump. NodalRed2x checks the firmware when it loads."
+      }
+    ]
+  },
+  {
+    "path": "nodalred2x/banks",
+    "label": "Nord Lead 2x sound sets",
+    "description": "Optional: your own Nord Lead 2 / 2x sound sets as SysEx (.syx) or MIDI (.mid) single dumps, such as Clavia's Factory Program Library. Each file is a bank of up to 99 sounds.",
+    "hint": "A .txt beside a bank with the same name (one name per line) names its sounds.",
+    "rules": [
+      {
+        "label": "Nord Lead SysEx dump",
+        "ext": [
+          ".syx"
+        ],
+        "size_min": 100,
+        "size_max": 4194304,
+        "header_hex": "f0"
+      },
+      {
+        "label": "MIDI file with SysEx dumps",
+        "ext": [
+          ".mid"
+        ],
+        "size_min": 100,
+        "size_max": 4194304,
+        "header": "MThd",
+        "unverified": true,
+        "note": "NodalRed2x uses the Nord Lead single dumps inside it; it checks them when it loads."
+      },
+      {
+        "label": "Sound names",
+        "ext": [
+          ".txt"
+        ],
+        "size_min": 1,
+        "size_max": 65536,
+        "unverified": true,
+        "note": "One name per line, for the bank file with the same name."
+      }
+    ]
+  }
+]

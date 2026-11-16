@@ -1,7 +1,7 @@
 /* NodalRed2x for MPC: gearmulator's Clavia Nord Lead 2x emulation (n2xLib: the 68331 firmware plus two DSP56362) as an mpc-vst-plugins
  * engine (wrapper/engine.h). GPL-3.0.
  *
- * One emulator thread per instance runs n2x::Device through synthLib::Plugin, fills a ring of int16 stereo, and render() only drains it.
+ * One emulator thread per instance runs n2x::Device through synthLib::Plugin, fills a ring of float stereo, and render() only drains it.
  * Single mode, part A on MIDI channel 1. The instrument holds no sounds of its own (its patch memory is flash the emulator never has), so
  * a sound is 66 parameter bytes this engine keeps: edits go to the firmware as MIDI controllers (most) or a whole single dump (the morph
  * amounts), a sound is loaded as a single dump. Sounds come from a small built-in STARTERS bank and from <data_dir>/banks/ (.syx / .mid
@@ -29,6 +29,7 @@
 #include <sched.h>
 #include <sys/resource.h>
 #include <sys/syscall.h>
+#include <ctime>
 #include <thread>
 #include <unistd.h>
 #include <unordered_map>
@@ -140,7 +141,7 @@ struct Inst {
     std::thread th;
     std::atomic<bool> stop{false}, ready{false}, failed{false};
 
-    std::vector<int16_t> ring = std::vector<int16_t>(kRingFrames * 2);
+    std::vector<float> ring = std::vector<float>(kRingFrames * 2);     // float: a loud sound may pass full scale (no clipping here)
     std::atomic<uint32_t> wr{0}, rd{0};
     std::atomic<uint32_t> underruns{0};
     std::atomic<uint32_t> ring_min{0xffffffffu}, burst_max{0};
@@ -166,6 +167,9 @@ struct Inst {
     char fav_name[kFavSlots][24] = {};
     Patch fav_patch[kFavSlots];
     std::atomic<long long> fav_list_ms{-100000};
+    Patch fav_pend{};                 // +FAV: the sound as it was when the naming keyboard opened (under fm)
+    bool fav_pend_ok = false;
+    uint32_t rng = 0x9e3779b9u;
     std::mutex stm;
     char stats_cache[96] = "";
     int stats_cpu = -1;
@@ -533,11 +537,11 @@ void emu_main(Inst *in) {
         std::vector<synthLib::SMidiEvent> midiOut;
         plugin->getMidiOut(midiOut);                         // nothing is read back: the engine holds the sound
 
-        const float g = in->gain.load() / 100.0f * 32767.0f;
+        const float g = in->gain.load() / 100.0f;
         uint32_t w = in->wr.load(std::memory_order_relaxed);
         for (int i = 0; i < kBlock; i++) {
-            in->ring[(w & (kRingFrames - 1)) * 2] = (int16_t)std::max(-32768.0f, std::min(32767.0f, outl[i] * g));
-            in->ring[(w & (kRingFrames - 1)) * 2 + 1] = (int16_t)std::max(-32768.0f, std::min(32767.0f, outr[i] * g));
+            in->ring[(w & (kRingFrames - 1)) * 2] = std::max(-8.0f, std::min(8.0f, outl[i] * g));
+            in->ring[(w & (kRingFrames - 1)) * 2 + 1] = std::max(-8.0f, std::min(8.0f, outr[i] * g));
             w++;
         }
         in->wr.store(w, std::memory_order_release);
@@ -632,6 +636,31 @@ void fav_save(Inst *in) {
     for (int i = 0; i < in->fav_count; i++) if (in->fav_patch[i] == d) return;
     const int i = in->fav_count;
     snprintf(in->fav_name[i], 24, "%s", nm.empty() ? "Favourite" : nm.c_str());
+    in->fav_patch[i] = d;
+    in->fav_count++;
+    if (!fav_write(in)) in->fav_count--;
+    else { in->fav_current = i; in->fav_stamp = in->load_gen; }
+}
+
+/* +FAV with the naming keyboard: fav_begin keeps the sound as it is now, fav_save_as stores it under the typed name */
+void fav_begin(Inst *in) {
+    const Patch d = current_patch(in);
+    std::lock_guard<std::mutex> l(in->fm);
+    in->fav_pend = d;
+    in->fav_pend_ok = true;
+}
+
+void fav_save_as(Inst *in, const char *name) {
+    const Patch cur = current_patch(in);
+    std::lock_guard<std::mutex> l(in->fm);
+    const Patch d = in->fav_pend_ok ? in->fav_pend : cur;
+    in->fav_pend_ok = false;
+    if (in->fav_count >= kFavSlots) return;
+    char nm[24];
+    snprintf(nm, sizeof nm, "%s", name && *name ? name : "Favourite");
+    for (int i = 0; i < in->fav_count; i++) if (in->fav_patch[i] == d && !strcmp(in->fav_name[i], nm)) return;
+    const int i = in->fav_count;
+    memcpy(in->fav_name[i], nm, sizeof nm);
     in->fav_patch[i] = d;
     in->fav_count++;
     if (!fav_write(in)) in->fav_count--;
@@ -787,6 +816,19 @@ void write_byte(Inst *in, int idx, uint8_t v) {
     in->push(std::move(c));
 }
 
+/* RANDOM: a random sound from every loaded bank (the empty ones have none to pick) */
+void random_patch(Inst *in) {
+    uint32_t r = in->rng ^ (uint32_t)time(nullptr) * 2654435761u ^ (uint32_t)clock();
+    r ^= r << 13; r ^= r >> 17; r ^= r << 5;
+    std::vector<int> ok;
+    for (int b = 0; b < bank_count(in); b++) if (bank_size(in, b) > 0) ok.push_back(b);
+    if (ok.empty()) return;
+    const int b = ok[(r >> 8) % ok.size()];
+    r ^= r << 13; r ^= r >> 17; r ^= r << 5;
+    in->rng = r;
+    select_sound(in, b, (int)((r >> 8) % (uint32_t)bank_size(in, b)));
+}
+
 void eng_set(void *p, const char *key, const char *val) {
     Inst *in = (Inst *)p;
     if (!in || !key || !val) return;
@@ -821,6 +863,9 @@ void eng_set(void *p, const char *key, const char *val) {
     if (!strcmp(key, "all_notes_off")) { if (press) { Cmd c; c.type = C_PANIC; in->push(std::move(c)); } return; }
     if (!strcmp(key, "init_patch")) { if (press) select_sound(in, in->bank, in->preset); return; }      // reload the stored sound
     if (!strcmp(key, "fav_save")) { if (press) { fav_save(in); in->bump(); } return; }
+    if (!strcmp(key, "fav_begin")) { if (press) fav_begin(in); return; }
+    if (!strcmp(key, "fav_save_as")) { fav_save_as(in, val); in->bump(); return; }
+    if (!strcmp(key, "random_patch")) { if (press) random_patch(in); return; }
     if (!strcmp(key, "fav_delete")) { if (press) { fav_delete(in); in->bump(); } return; }
     if (!strcmp(key, "favourite")) { fav_pick(in, atoi(val)); return; }
     if (!strcmp(key, "gain")) { in->gain = clampi(atoi(val), 10, 400); return; }
@@ -898,6 +943,23 @@ int eng_get(void *p, const char *key, char *buf, int n) {
         const int i = atoi(key + 10);
         return put(buf, n, "%s", i >= 0 && i < in->fav_count ? in->fav_name[i] : "-");
     }
+    if (!strcmp(key, "bank_count")) return put(buf, n, "%d", bank_count(in));
+    if (!strcmp(key, "ready")) return put(buf, n, "%d", in->ready.load() ? 1 : 0);
+    if (!strcmp(key, "fav_count")) { std::lock_guard<std::mutex> l(in->fm); return put(buf, n, "%d", in->fav_count); }
+    if (!strncmp(key, "fav_name:", 9)) {      // the PRESET menu's names (unlike "favourite:<n>" this does not hold the CPU readout)
+        std::lock_guard<std::mutex> l(in->fm);
+        const int i = atoi(key + 9);
+        return put(buf, n, "%s", i >= 0 && i < in->fav_count ? in->fav_name[i] : "");
+    }
+    if (!strcmp(key, "sound_name")) {         // the name the naming keyboard starts from: the picked favourite's, else the sound's
+        std::string nm;
+        {
+            std::lock_guard<std::mutex> l(in->fm);
+            if (in->fav_current >= 0 && in->fav_current < in->fav_count && in->fav_stamp == in->load_gen) nm = in->fav_name[in->fav_current];
+        }
+        if (nm.empty()) { std::lock_guard<std::mutex> l(in->sm); nm = sound_name(in, in->bank, in->preset); }
+        return put(buf, n, "%s", nm.c_str());
+    }
     if (!strcmp(key, "fav_text")) { std::lock_guard<std::mutex> l(in->fm); return put(buf, n, "FAVOURITES %d / %d", in->fav_count, kFavSlots); }
     if (!strcmp(key, "display_rev")) return put(buf, n, "%u", in->rev.load());
     if (!strcmp(key, "state")) {
@@ -923,9 +985,9 @@ int eng_get(void *p, const char *key, char *buf, int n) {
     return -1;
 }
 
-void eng_render(void *p, int16_t *out, int frames) {
-    Inst *in = (Inst *)p;
-    if (!in || !in->ready.load(std::memory_order_acquire)) { memset(out, 0, (size_t)frames * 4); return; }
+/* the ring's frames to `out` (interleaved stereo float), silence for what is missing (an underrun) */
+void render_float(Inst *in, float *out, int frames) {
+    if (!in || !in->ready.load(std::memory_order_acquire)) { memset(out, 0, (size_t)frames * 2 * sizeof(float)); return; }
     uint32_t r = in->rd.load(std::memory_order_relaxed);
     const uint32_t avail = in->wr.load(std::memory_order_acquire) - r;
     if (avail < in->ring_min.load(std::memory_order_relaxed)) in->ring_min.store(avail, std::memory_order_relaxed);
@@ -937,8 +999,19 @@ void eng_render(void *p, int16_t *out, int frames) {
     }
     in->rd.store(r, std::memory_order_release);
     if (got < frames) {
-        memset(out + got * 2, 0, (size_t)(frames - got) * 4);
+        memset(out + got * 2, 0, (size_t)(frames - got) * 2 * sizeof(float));
         in->underruns.fetch_add(1, std::memory_order_relaxed);
+    }
+}
+
+/* the 1.x API's int16 render (clips at full scale); the native front end takes floats (nodalred2x_render_float) */
+void eng_render(void *p, int16_t *out, int frames) {
+    float f[2 * 512];
+    for (int done = 0; done < frames;) {
+        const int n = std::min(frames - done, 512);
+        render_float((Inst *)p, f, n);
+        for (int i = 0; i < 2 * n; i++) out[2 * done + i] = (int16_t)lrintf(std::max(-32768.0f, std::min(32767.0f, f[i] * 32767.0f)));
+        done += n;
     }
 }
 
@@ -956,3 +1029,4 @@ const mpc_engine_t engine = {eng_create, eng_destroy, eng_midi, eng_set, eng_get
 }  // namespace
 
 extern "C" const mpc_engine_t *mpc_engine(void) { return &engine; }
+extern "C" void nodalred2x_render_float(void *p, float *out, int frames) { render_float((Inst *)p, out, frames); }

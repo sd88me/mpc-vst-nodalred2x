@@ -1,0 +1,15 @@
+{
+  "name": "NodalRed2x",
+  "manufacturer": "sd88me",
+  "version": "0.2.0",
+  "kind": "instrument",
+  "uid": "NodR",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file64": "VST/nodalred2x-arm64.so",
+  "description": "Clavia Nord Lead 2x emulation (gearmulator). Needs your own Nord Lead 2x ROM in nodalred2x/roms/.",
+  "author": "sd88me",
+  "url": "https://github.com/sd88me/mpc-vst-nodalred2x",
+  "license": "GPL-3.0-only"
+}
