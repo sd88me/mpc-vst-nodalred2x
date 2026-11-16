@@ -4,3 +4,4 @@ vst/build/
 *.bin
 *.wav
 pgo/
+data/
