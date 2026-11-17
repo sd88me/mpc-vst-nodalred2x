@@ -39,16 +39,30 @@ controller and two DSP56362 voice DSPs). "NodalRed2x" is gearmulator's name for 
 - This is the heaviest synth port of the family: it needs about one and a half of the fast cores' worth of CPU, so keep an eye on the DROPOUTS readout.
 
 ## Install
-Either:
-- **`NodalRed2x-<version>-mpc-sdk.zip`** from [Releases](https://github.com/sd88me/mpc-vst-nodalred2x/releases): copy the folder
-  `sd88me - VST - NodalRed2x` into a `VST2 Plugins` folder at the root of a drive the MPC can see, put your ROM in its `nodalred2x/roms/` and any
-  sound sets in `nodalred2x/banks/` (the file name becomes the bank name). Turn on **Preferences > Enhancements (Beta) > Enable Enhancements and
-  External Plugin Support**, then restart. Load **NodalRed2x** on a plugin track from External Plugins.
-- **`NodalRed2x-<version>-mpc-aarch64.zip`** (or the OpenMPC Plugin Manager): runs `install.sh` on the device; a 0.1.0 install is upgraded in place
-  and your ROM, sound sets and favourites are kept.
+There are two plugin formats. Use one of them, not both: they are the same plugin.
 
-Upgrading a 0.1.0 install from the `VST2-Plugins` zip by copying the new folder over it also works: NodalRed2x keeps using `VST/nodalred2x/`
-(ROM, banks, favourites) while there is no `nodalred2x/` folder beside it.
+| Plugin format | Zip | How it is installed | Plugin folder |
+|---|---|---|---|
+| **SDK format** (MPC OS 3.10.1 or later) | `NodalRed2x-<version>-mpc-sdk.zip` | By hand: unzip it, copy the folder `sd88me - VST - NodalRed2x` into `VST2 Plugins` at the root of a drive the MPC can see, turn on **Preferences > Enhancements (Beta) > Enable Enhancements** and **External Plugin Support**, and restart the MPC | `VST2 Plugins/sd88me - VST - NodalRed2x/` on that drive |
+| **Older format** (plugins listed in `MPC.settings`) | `NodalRed2x-<version>-mpc-aarch64.zip` | With the **OpenMPC Plugin Manager**, or by hand over SSH with the zip's `install.sh` (needs root access; on a Live III add `-t /nvme/Synths`; the zip's `INSTALL.md` has the details) | `sd88me - VST - NodalRed2x/` in the Synths folder it was installed to |
+
+The zips are on [Releases](https://github.com/sd88me/mpc-vst-nodalred2x/releases).
+
+### Adding your ROM
+Your ROM goes in the plugin folder's `nodalred2x/roms/` (the zip already has the folder), for example
+`VST2 Plugins/sd88me - VST - NodalRed2x/nodalred2x/roms/`. Sound sets go in `nodalred2x/banks/` (optional; the file name becomes the bank name).
+
+| Plugin format | How to add your ROM |
+|---|---|
+| SDK format | By hand: over USB, or with the MPC's file browser. |
+| Older format, with the OpenMPC Plugin Manager | Use its **Your ROMs and files** step: it checks each file and copies it into the right folder. Or copy them by hand. |
+| Older format, with `install.sh` | By hand: with `scp`, over USB, or with the MPC's file browser. |
+
+### Upgrading
+- **SDK format:** copy the new folder over the old one (merge it, don't delete the old folder first) so your ROM and your sound sets and favourites stay.
+  From a 0.1.0 install copied by hand: the new folder adds `nodalred2x/`, and the plugin then reads that instead of the old
+  `VST/nodalred2x/`, so move `roms/`, `banks/` and your favourites from `VST/nodalred2x/` into `nodalred2x/`.
+- **Older format:** the OpenMPC Plugin Manager and `install.sh` upgrade in place and keep your ROM and your sound sets and favourites.
 
 The firmware boots in about 2 seconds.
 
