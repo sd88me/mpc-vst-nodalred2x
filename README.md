@@ -66,6 +66,52 @@ Your ROM goes in the plugin folder's `nodalred2x/roms/` (the zip already has the
 
 The firmware boots in about 2 seconds.
 
+## Backing up your favourites and sounds
+
+Your favourites and your own files are kept in the plugin folder on the MPC, not in your projects (a project keeps only the sound its
+track uses). Back them up before you update the plugin or MPC OS, reset the device, or move to another MPC. These are the files to keep,
+inside the plugin folder `sd88me - VST - NodalRed2x`:
+
+| File or folder | What it holds |
+|---|---|
+| `nodalred2x/favourites.dat` | your favourites (+FAV) |
+| `nodalred2x/banks/` | your sound sets |
+| `nodalred2x/roms/` | your ROM |
+
+Your ROMs are yours to keep with your backup, but don't share them.
+
+### Where the plugin folder is
+It is in `VST2 Plugins` on one of the MPC's drives, or in a Synths folder (`/sdcard/Synths`, or `/nvme/Synths` on a Live III),
+depending on how NodalRed2x was installed. Over SSH (root access), this prints its path:
+
+```bash
+ssh root@<device-ip> 'find /sdcard /nvme /media -maxdepth 3 -type d -name "sd88me - VST - NodalRed2x" 2>/dev/null'
+```
+
+### Backing up
+- **The plugin folder is on an SD card or USB drive:** plug the drive into a computer and copy the files above to it.
+- **Over SSH**, from a computer: this copies the whole plugin folder into one file, `nodalred2x-backup.tar`. Put the folder that holds the
+  plugin folder (the path above without its last part) in place of `<parent folder>`:
+
+  ```bash
+  ssh root@<device-ip> 'cd "<parent folder>" && tar cf - "sd88me - VST - NodalRed2x"' > nodalred2x-backup.tar
+  ```
+
+### Restoring
+Install NodalRed2x first (on the new device, or after the reset or update), then put back only the files above. Don't copy the whole
+old folder over the new one: that would put the old version of the plugin back too.
+
+- **From a drive:** copy the files back to the same places in the new plugin folder.
+- **Over SSH:** unpack the backup on your computer and send the files back. List only the ones your backup has, and put the new
+  plugin folder's path (found as above) in place of `<plugin folder>`:
+
+  ```bash
+  mkdir nodalred2x-backup && tar xf nodalred2x-backup.tar -C nodalred2x-backup
+  tar cf - -C "nodalred2x-backup/sd88me - VST - NodalRed2x" "nodalred2x/favourites.dat" "nodalred2x/banks" "nodalred2x/roms" | ssh root@<device-ip> 'cd "<plugin folder>" && tar xf -'
+  ```
+
+Then remove NodalRed2x from its tracks and add it again (or reopen the project), so it reads the restored files.
+
 ## Tips
 - Notes from the MPC play part A on MIDI channel 1.
 - A MIDI program change picks a sound from the current bank; bank select (CC 0) picks the bank.
